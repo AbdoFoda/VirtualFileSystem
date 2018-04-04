@@ -1,0 +1,4 @@
+the last bug description:
+	the bug : when de-allocating a file,the first block only is deleted and the remaining blocks still allocated.
+	Reason : we delete the first block and it's pointer to the next one before we save who was the next!
+#done 
