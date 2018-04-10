@@ -21,6 +21,7 @@ public class Main {
 		public static HashMap<String, FolderStructure> existingFolders = new HashMap<String, FolderStructure>();
 		public static FolderStructure root = new FolderStructure("root");
 		private static String filePath = "folderStructure.txt";
+
 		// private static
 		public static void save() {
 			File f = new File(filePath);
@@ -123,12 +124,12 @@ public class Main {
 	}
 
 	public static Boolean deleteFolder(String path) {
-		if (!path.contains("/"))
+		if (!path.contains("/") || !folderStructure.existingFolders.containsKey(path))
 			return false;
 		String parentPath = path.substring(0, path.lastIndexOf('/'));
 		if (folderStructure.existingFolders.containsKey(parentPath)) {
 			FolderStructure parent = folderStructure.existingFolders.get(parentPath);
-			if (parent.deleteFolder(new FolderStructure(path))) {
+			if (parent.deleteFolder(folderStructure.existingFolders.get(path))) {
 				folderStructure.existingFolders.remove(path);
 				return true;
 			}
@@ -154,10 +155,10 @@ public class Main {
 		ArrayList<MemoryBlock> memory = AllocationStrategy.singleTone.memory;
 		for (int i = 0; i < memory.size(); ++i) {
 			if (memory.get(i).allocatedFile == null) {
-				System.out.println("Free :"+i);
+				System.out.println("Free :" + i);
 				freeBlocks++;
 			} else {
-				System.out.println("Allocated :"+i);
+				System.out.println("Allocated :" + i);
 				allocatedBlocks++;
 			}
 		}
@@ -182,8 +183,8 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		
-		AllocationStrategy.setSingleTone( new ExtentAllocation(10, 1) );
+
+		AllocationStrategy.setSingleTone(new ExtentAllocation(10, 1));
 		folderStructure.load();
 		AllocationStrategy.singleTone.loadMemoryState();
 		Scanner sc = new Scanner(System.in);
