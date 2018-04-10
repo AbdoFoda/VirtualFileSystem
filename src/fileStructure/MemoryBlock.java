@@ -1,9 +1,14 @@
 package fileStructure;
 
 public class MemoryBlock {
-	public MemoryBlock(Integer id, Integer size) {
-		// TODO Auto-generated constructor stub
-		this.blockSize = size;
+	public MemoryBlock(Integer id) {
+		this.blockSize = AllocationStrategy.singleTone.blockSize;
+		this.blockId = id;
+		allocatedFile = null;
+		nextBlock = -1;
+	}
+	public MemoryBlock(Integer id,Integer blockSize) {
+		this.blockSize = blockSize;
 		this.blockId = id;
 		allocatedFile = null;
 		nextBlock = -1;

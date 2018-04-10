@@ -17,9 +17,23 @@ public class FileStructure {
 	String getName() {
 		return path.substring(path.lastIndexOf('/') + 1);
 	}
-
+	
+	FileStructure(){
+		this.path = "";
+		this.fileSize = 0;
+		startingBlock = null;
+		parentFolder = null;
+	}
+	
 	FileStructure(String path, Integer fileSize) {
 		this.path = path;
 		this.fileSize = fileSize;
+	}
+	
+	FileStructure(String path){
+		this.path = path;
+		this.fileSize = 0;
+		startingBlock = null;
+		parentFolder = null;
 	}
 }

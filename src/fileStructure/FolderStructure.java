@@ -7,7 +7,7 @@ public class FolderStructure {
 	public ArrayList<FolderStructure> folders;
 	public ArrayList<FileStructure> files;
 	public FolderStructure parentFolder;
-	public static AllocationStrategy strategy;
+
 
 	FolderStructure(String path) {
 		this.path = path;
@@ -27,7 +27,7 @@ public class FolderStructure {
 			if (files.get(i).path.equals(file.path))
 				return false;
 		}
-		MemoryBlock block = strategy.allocate(file);
+		MemoryBlock block = AllocationStrategy.singleTone.allocate(file);
 		if (block == null) {
 			return false;
 		}
@@ -49,11 +49,9 @@ public class FolderStructure {
 	}
 
 	public Boolean deleteFile(FileStructure file) {
-		// TODO Auto-generated method stub
-		System.out.println(files.size());
 		for (int i = 0; i < files.size(); ++i) {
 			if (files.get(i).path.equals(file.path)) {
-				strategy.deAllocate(files.get(i));
+				AllocationStrategy.singleTone.deAllocate(files.get(i));
 				files.remove(i);
 				return true;
 			}
@@ -62,7 +60,6 @@ public class FolderStructure {
 	}
 
 	public Boolean deleteFolder(FolderStructure folder) {
-		System.out.println(folders.size());
 		for (int i = 0; i < folders.size(); ++i) {
 			if (folders.get(i).path.equals(folder.path)) {
 				for (int j = 0; j < folder.folders.size(); ++j) {

@@ -2,17 +2,10 @@ package fileStructure;
 
 import java.util.ArrayList;
 
-public class ExtentAllocation implements AllocationStrategy {
-	private Integer blockSize, numberOfBlocks;
-	private ArrayList<MemoryBlock> memory;
+public class ExtentAllocation extends AllocationStrategy {
 
 	public ExtentAllocation(Integer n, Integer sz) {
-		setNumberOfBlocks(n);
-		setBlockSize(sz);
-		memory = new ArrayList<MemoryBlock>();
-		for (int i = 0; i < n; ++i) {
-			memory.add(i, new MemoryBlock(i, sz));
-		}
+		super(n,sz);
 	}
 
 	@Override
@@ -31,7 +24,7 @@ public class ExtentAllocation implements AllocationStrategy {
 					r++;
 				}
 			} else {
-				if (r - l + 1 >= mnExpectedBlocks) {
+				if (l != -1 && r - l + 1 >= mnExpectedBlocks) {
 					allPossible.add(new Pair<Integer, Integer>(l, r));
 				}
 				l = r = -1;
@@ -52,7 +45,7 @@ public class ExtentAllocation implements AllocationStrategy {
 
 			}
 			int start = allPossible.get(mnIdx).first;
-			int end = Math.min(start + mnExpectedBlocks-1, allPossible.get(mnIdx).second);
+			int end = Math.min(start + mnExpectedBlocks - 1, allPossible.get(mnIdx).second);
 			for (int i = start; i <= end; ++i) {
 				MemoryBlock block = memory.get(i);
 				block.allocatedFile = f;
@@ -64,55 +57,5 @@ public class ExtentAllocation implements AllocationStrategy {
 		return ret;
 	}
 
-	@Override
-	public Integer getBlockSize() {
-		// TODO Auto-generated method stub
-		return blockSize;
-	}
-
-	@Override
-	public Integer getNumberOfBlocks() {
-		// TODO Auto-generated method stub
-		return numberOfBlocks;
-	}
-
-	@Override
-	public void setBlockSize(Integer blockSize) {
-		// TODO Auto-generated method stub
-		this.blockSize = blockSize;
-	}
-
-	@Override
-	public void setNumberOfBlocks(Integer numberOfBlocks) {
-		// TODO Auto-generated method stub
-		this.numberOfBlocks = numberOfBlocks;
-	}
-
-	@Override
-	public ArrayList<MemoryBlock> getMemory() {
-		// TODO Auto-generated method stub
-		return memory;
-	}
-
-	@Override
-	public void setMemory(ArrayList<MemoryBlock> memory) {
-		// TODO Auto-generated method stub
-		this.memory = memory;
-
-	}
-
-	@Override
-	public void deAllocate(FileStructure f) {
-		// TODO Auto-generated method stub
-		MemoryBlock cur = f.startingBlock;
-		while (true) {
-			cur.allocatedFile = null;
-			int nxt = cur.nextBlock;
-			cur.nextBlock = -1;
-			if (nxt == -1)
-				break;
-			cur = memory.get(nxt);
-		}
-	}
 
 }
