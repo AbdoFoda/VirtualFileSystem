@@ -22,7 +22,6 @@ public class Main {
 		public static FolderStructure root = new FolderStructure("root");
 		private static String filePath = "folderStructure.txt";
 
-		// private static
 		public static void save() {
 			File f = new File(filePath);
 			try {
@@ -43,8 +42,7 @@ public class Main {
 					writer.println(entry.getValue().folders.get(i).path);
 				}
 				for (int i = 0; i < entry.getValue().files.size(); ++i) {
-					writer.println(entry.getValue().files.get(i).path + " " + entry.getValue().files.get(i).fileSize
-							+ " " + entry.getValue().files.get(i).startingBlock.blockId);
+					writer.println(entry.getValue().files.get(i).path + " " + entry.getValue().files.get(i).fileSize);
 				}
 			}
 
@@ -82,7 +80,7 @@ public class Main {
 						FileStructure childFile = new FileStructure();
 						childFile.path = sc.next();
 						childFile.fileSize = sc.nextInt();
-						childFile.startingBlock = new MemoryBlock(sc.nextInt());
+
 						parent.files.add(childFile);
 					}
 				}
@@ -158,7 +156,12 @@ public class Main {
 				System.out.println("Free :" + i);
 				freeBlocks++;
 			} else {
-				System.out.println("Allocated :" + i);
+				if ((memory.get(i).getClass().isInstance(new IndexedAllocation()))) {
+					System.out.println("Allocated as Index Block to :" + i + " to file in path "
+							+ memory.get(i).allocatedFile.path);
+				} else {
+					System.out.println("Allocated :" + i + " to file in path " + memory.get(i).allocatedFile.path);
+				}
 				allocatedBlocks++;
 			}
 		}
@@ -183,10 +186,10 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-
-		AllocationStrategy.setSingleTone(new ExtentAllocation(10, 1));
-		folderStructure.load();
-		AllocationStrategy.singleTone.loadMemoryState();
+		folderStructure.existingFolders.put("root", folderStructure.root);
+		AllocationStrategy.setSingleTone(new IndexedAllocation(10, 1));
+		// folderStructure.load();
+		// AllocationStrategy.singleTone.loadMemoryState();
 		Scanner sc = new Scanner(System.in);
 		String cmd = "";
 		while (!cmd.equals("exit")) {
@@ -195,7 +198,6 @@ public class Main {
 			if (arr[0].equals("CreateFile")) {
 				if (createFile(arr[1], Integer.parseInt(arr[2]))) {
 					System.out.println("The file has been created");
-					// printStructure(root,0);
 				} else {
 					System.out.println("Error crating file");
 				}
@@ -222,12 +224,14 @@ public class Main {
 				printStatus();
 			} else if (arr[0].equals("DisplayDiskStructure")) {
 				printStructure(folderStructure.root, 0);
+			} else if (arr[0].equals("exit")) {
+				System.out.println("Exiting the VFS");
 			} else {
 				System.out.println("Unknown Command");
 			}
 		}
 		sc.close();
-		folderStructure.save();
-		AllocationStrategy.singleTone.saveMemoryState();
+		// folderStructure.save();
+		// AllocationStrategy.singleTone.saveMemoryState();
 	}
 }

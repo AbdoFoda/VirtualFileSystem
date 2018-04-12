@@ -1,21 +1,23 @@
 package fileStructure;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ExtentAllocation extends AllocationStrategy {
 
 	public ExtentAllocation(Integer n, Integer sz) {
-		super(n,sz);
+		super(n, sz);
 	}
 
+	public static HashMap<String, Pair<Integer, Integer>> pathToBlock = new HashMap<String, Pair<Integer, Integer>>();
+
 	@Override
-	public MemoryBlock allocate(FileStructure f) { // using best-fit
+	public Boolean allocate(FileStructure f) { // using best-fit
 		// <left,right>>
 		ArrayList<Pair<Integer, Integer>> allPossible = new ArrayList<Pair<Integer, Integer>>();
 		Integer mnExpectedBlocks = (f.fileSize + blockSize - 1) / blockSize;
 		// this called ceil divison:V
 		Integer l = -1, r = -1;
-		MemoryBlock ret = null;
 		for (int i = 0; i < numberOfBlocks; ++i) {
 			if (memory.get(i).allocatedFile == null) {
 				if (l == -1) {
@@ -49,13 +51,24 @@ public class ExtentAllocation extends AllocationStrategy {
 			for (int i = start; i <= end; ++i) {
 				MemoryBlock block = memory.get(i);
 				block.allocatedFile = f;
-				block.nextBlock = ((i == end) ? -1 : i + 1);
-				if (ret == null)
-					ret = block;
 			}
+			pathToBlock.put(f.path, new Pair<Integer, Integer>(start, end));
+			return true;
 		}
-		return ret;
+		return false;
 	}
 
+	@Override
+	public Boolean deAllocate(FileStructure f) {
+		// TODO Auto-generated method stub
+		if (!pathToBlock.containsKey(f.path))
+			return false;
+		Integer start = pathToBlock.get(f.path).first;
+		Integer end = pathToBlock.get(f.path).second;
+		for (int cur = start; cur <= end; ++cur) {
+			memory.get(cur).freeBlock();
+		}
+		return true;
+	}
 
 }

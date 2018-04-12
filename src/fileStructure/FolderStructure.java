@@ -8,7 +8,6 @@ public class FolderStructure {
 	public ArrayList<FileStructure> files;
 	public FolderStructure parentFolder;
 
-
 	FolderStructure(String path) {
 		this.path = path;
 		folders = new ArrayList<FolderStructure>();
@@ -27,11 +26,9 @@ public class FolderStructure {
 			if (files.get(i).path.equals(file.path))
 				return false;
 		}
-		MemoryBlock block = AllocationStrategy.singleTone.allocate(file);
-		if (block == null) {
+		if (!AllocationStrategy.singleTone.allocate(file)) {
 			return false;
 		}
-		file.startingBlock = block;
 		files.add(file);
 		file.parentFolder = this;
 		return true;
@@ -51,9 +48,10 @@ public class FolderStructure {
 	public Boolean deleteFile(FileStructure file) {
 		for (int i = 0; i < files.size(); ++i) {
 			if (files.get(i).path.equals(file.path)) {
-				AllocationStrategy.singleTone.deAllocate(files.get(i));
-				files.remove(i);
-				return true;
+				if (AllocationStrategy.singleTone.deAllocate(files.get(i))) {
+					files.remove(i);
+					return true;
+				}
 			}
 		}
 		return false;

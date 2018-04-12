@@ -3,7 +3,6 @@ package fileStructure;
 public class FileStructure {
 	public String path;
 	public Integer fileSize;
-	public MemoryBlock startingBlock;
 	public FolderStructure parentFolder;
 
 	public Boolean deleteFile() {
@@ -21,7 +20,6 @@ public class FileStructure {
 	FileStructure(){
 		this.path = "";
 		this.fileSize = 0;
-		startingBlock = null;
 		parentFolder = null;
 	}
 	
@@ -33,7 +31,6 @@ public class FileStructure {
 	FileStructure(String path){
 		this.path = path;
 		this.fileSize = 0;
-		startingBlock = null;
 		parentFolder = null;
 	}
 }

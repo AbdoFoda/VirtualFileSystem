@@ -28,69 +28,59 @@ public abstract class AllocationStrategy {
 	}
 	
 	
-	public abstract MemoryBlock allocate(FileStructure f) ;
+	public abstract Boolean allocate(FileStructure f) ;
 
-	public void deAllocate(FileStructure f) {
-		MemoryBlock cur = f.startingBlock;
-		while (true) {
-			cur.allocatedFile = null;
-			int nxt = cur.nextBlock;
-			cur.nextBlock = -1;
-			if (nxt == -1)
-				break;
-			cur = memory.get(nxt);
-		}
-	}
-
-	public void saveMemoryState() {
-		File f = new File("memoryState.txt");
-		try {
-			f.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			PrintWriter writer = new PrintWriter(f);
-			writer.println(numberOfBlocks + " " + blockSize);
-			for (int i = 0; i < numberOfBlocks; ++i) {
-				writer.println((memory.get(i).allocatedFile == null ? "null" : memory.get(i).allocatedFile.path) + " "
-						+ memory.get(i).nextBlock);
-			}
-			writer.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void loadMemoryState() {
-		File f = new File("memoryState.txt");
-		try {
-			if (!f.createNewFile()) {
-				return;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			Scanner sc = new Scanner(f);
-			numberOfBlocks = sc.nextInt();
-			blockSize = sc.nextInt();
-			if (memory == null)
-				memory = new ArrayList<MemoryBlock>();
-			for (int i = 0; i < numberOfBlocks; ++i) {
-				MemoryBlock block = new MemoryBlock(i);
-				block.allocatedFile = new FileStructure(sc.next());
-				if(block.allocatedFile.path == "null")
-					block.allocatedFile = null;
-				block.nextBlock = sc.nextInt();
-				memory.add(block);
-			}
-			sc.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
+	public abstract Boolean deAllocate(FileStructure f);
+//
+//	public void saveMemoryState() {
+//		File f = new File("memoryState.txt");
+//		try {
+//			f.createNewFile();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		try {
+//			PrintWriter writer = new PrintWriter(f);
+//			writer.println(numberOfBlocks + " " + blockSize);
+//			for (int i = 0; i < numberOfBlocks; ++i) {
+//				writer.println((memory.get(i).allocatedFile == null ? "null" : memory.get(i).allocatedFile.path) + " "
+//						+ memory.get(i).nextBlock);
+//			}
+//			writer.close();
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	public void loadMemoryState() {
+//		File f = new File("memoryState.txt");
+//		try {
+//			if (!f.createNewFile()) {
+//				return;
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		try {
+//			Scanner sc = new Scanner(f);
+//			numberOfBlocks = sc.nextInt();
+//			blockSize = sc.nextInt();
+//			if (memory == null)
+//				memory = new ArrayList<MemoryBlock>();
+//			for (int i = 0; i < numberOfBlocks; ++i) {
+//				MemoryBlock block = new MemoryBlock(i);
+//				block.allocatedFile = new FileStructure(sc.next());
+//				if(block.allocatedFile.path == "null")
+//					block.allocatedFile = null;
+//				block.nextBlock = sc.nextInt();
+//				memory.add(block);
+//			}
+//			sc.close();
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//	}
 
 }
